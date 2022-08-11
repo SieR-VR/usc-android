@@ -96,8 +96,8 @@ target_link_libraries(usc-game discord-rpc)
 target_link_libraries(usc-game cpr)
 target_link_libraries(usc-game nlohmann_json)
 
-target_link_libraries(usc-game ${PROJECT_SOURCE_DIR}/bin/libSDL2_Debug.so)
-target_link_libraries(usc-game "/home/sier/android-sdk/ndk/21.4.7075529/platforms/android-30/arch-arm64/usr/lib/liblog.so")
+target_link_libraries(usc-game ${PROJECT_SOURCE_DIR}/bin/libSDL2.so)
+target_link_libraries(usc-game "${ANDROID_SYSROOT_PATH}/lib/liblog.so")
 target_link_libraries(usc-game ${LibArchive_LIBRARIES})
 target_include_directories(usc-game SYSTEM PRIVATE ${LibArchive_INCLUDE_DIRS})
 

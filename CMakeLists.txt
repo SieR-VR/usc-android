@@ -21,8 +21,8 @@ if(WIN32 AND ${CMAKE_VERSION} VERSION_GREATER "3.12")
 endif()
 # Project configurations
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
-set(CMAKE_DEBUG_POSTFIX _Debug)
-set(CMAKE_RELEASE_POSTFIX _Release)
+# set(CMAKE_DEBUG_POSTFIX _Debug)
+# set(CMAKE_RELEASE_POSTFIX _Release)
 execute_process(COMMAND git log -1 --date=short --format="%cd_%h"
                 OUTPUT_VARIABLE GIT_DATE_HASH
                 ERROR_QUIET

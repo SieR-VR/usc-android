@@ -58,7 +58,7 @@ target_link_libraries(Audio ${ANDROID_NDK}/platforms/android-30/arch-arm64/usr/l
 target_link_libraries(Audio soundtouch)
 target_link_libraries(Audio minimp3)
 target_link_libraries(Audio miniaudio)
-target_link_libraries(Audio ${PROJECT_SOURCE_DIR}/bin/libSDL2_Debug.so)
+target_link_libraries(Audio ${PROJECT_SOURCE_DIR}/bin/libSDL2.so)
 
 
 target_link_libraries(Audio cc-common)
