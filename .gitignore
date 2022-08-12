@@ -68,3 +68,6 @@ Makefile
 docs/build
 docs/source/_build
 
+# android build result
+bin/libSDL2*.so
+bin/libusc-game*.so

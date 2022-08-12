@@ -44,7 +44,12 @@ bool File::OpenRead(const String& path)
 	int handle = open(*path, O_RDONLY);
 	if(handle == -1)
 	{
+#ifndef ANDROID
 		Logf("Failed to open file for reading %s: %d", Logger::Severity::Warning, *path, errno);
+#else
+		Logf("Failed to open file for reading %s", Logger::Severity::Warning, *path);
+#endif
+
 		return false;
 	}
 
@@ -63,7 +68,11 @@ bool File::OpenWrite(const String& path, bool append /*= false*/, bool noLog /*=
 	if(handle == -1)
 	{
     if(!noLog)
-    		Logf("Failed to open file for writing %s: %d", Logger::Severity::Warning, *path, errno);
+#ifndef ANDROID
+		Logf("Failed to open file for reading %s: %d", Logger::Severity::Warning, *path, errno);
+#else
+		Logf("Failed to open file for reading %s", Logger::Severity::Warning, *path);
+#endif
 		return false;
 	}
 
