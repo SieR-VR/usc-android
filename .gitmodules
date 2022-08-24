@@ -16,3 +16,6 @@
 [submodule "third_party/libjpeg-turbo"]
 	path = third_party/libjpeg-turbo
 	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
+[submodule "SDL"]
+	path = SDL
+	url = https://github.com/libsdl-org/SDL.git
