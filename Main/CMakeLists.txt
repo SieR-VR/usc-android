@@ -96,7 +96,7 @@ target_link_libraries(usc-game discord-rpc)
 target_link_libraries(usc-game cpr)
 target_link_libraries(usc-game nlohmann_json)
 
-target_link_libraries(usc-game SDL2)
+target_link_libraries(usc-game SDL2_Debug)
 target_link_libraries(usc-game ${ANDROID_NDK_PLATFORM}/liblog.so)
 target_link_libraries(usc-game ${LibArchive_LIBRARIES})
 target_include_directories(usc-game SYSTEM PRIVATE ${LibArchive_INCLUDE_DIRS})

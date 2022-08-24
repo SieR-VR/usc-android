@@ -59,7 +59,7 @@ target_link_libraries(Audio ${ANDROID_NDK_PLATFORM}/libOpenSLES.so)
 target_link_libraries(Audio soundtouch)
 target_link_libraries(Audio minimp3)
 target_link_libraries(Audio miniaudio)
-target_link_libraries(Audio SDL2)
+target_link_libraries(Audio SDL2_Debug)
 
 
 target_link_libraries(Audio cc-common)
