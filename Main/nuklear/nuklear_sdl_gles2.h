@@ -15,7 +15,7 @@
 #ifndef NK_SDL_GLES2_H_
 #define NK_SDL_GLES2_H_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <SDL_opengles.h>
 
 

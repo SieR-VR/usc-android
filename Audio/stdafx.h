@@ -2,6 +2,6 @@
 #pragma once
 
 // SDL header files
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <Shared/Shared.hpp>

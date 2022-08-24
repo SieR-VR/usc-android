@@ -10,7 +10,7 @@
 #endif
 
 // SDL header files
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 // TODO: reference additional headers your program requires here
 #include <Shared/Shared.hpp>
