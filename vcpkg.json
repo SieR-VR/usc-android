@@ -3,13 +3,13 @@
     "name": "usc-game",
     "version": "0.5.0",
     "dependencies": [
-        "zlib-static",
-        "curl-static",
-        "freetype-static",
-        "libjpeg-turbo-static",
-        "libvorbis-static",
+        "zlib",
+        "curl",
+        "freetype",
+        "libjpeg-turbo",
+        "libvorbis",
         {
-            "name": "libarchive-static",
+            "name": "libarchive",
             "default-features": false,
             "features": [
                 "bzip2",
