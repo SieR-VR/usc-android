@@ -59,7 +59,7 @@ find_package(OGG REQUIRED)
 find_package(LibArchive REQUIRED)
 
 set(SDL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL/include")
-set(SDL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bin/libSDL2_Debug.so")
+set(SDL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bin/${VCPKG_TARGET_TRIPLET}/libSDL2_Debug.so")
 set(SDL_SHARED TRUE)
 add_subdirectory(SDL)
 find_library(SDL2 SDL2)
