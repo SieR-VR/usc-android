@@ -34,6 +34,9 @@
 #include "archive_entry.h"
 #include "LightPlugin/LightPlugin.h"
 
+#include "archive.h"
+#include "archive_entry.h"
+
 GameConfig g_gameConfig;
 SkinConfig *g_skinConfig;
 OpenGL *g_gl = nullptr;
@@ -934,6 +937,116 @@ void threadedRenderer() {
 	}
 }
 
+typedef struct SDL_archive_read_data {
+	SDL_RWops* rwops;
+	uint8_t buff[10240];
+} SDL_archive_read;
+
+ssize_t
+sdl_archive_read(struct archive *a, void *client_data, const void **buff)
+{
+  struct SDL_archive_read_data* mydata = (SDL_archive_read_data*)client_data;
+  *buff = mydata->buff;
+  return (SDL_RWread(mydata->rwops, mydata->buff, 1, 10240));
+}
+int
+sdl_archive_close(struct archive *a, void *client_data)
+{	
+	struct SDL_RWops* mydata = (SDL_RWops*)client_data;
+	SDL_RWclose(mydata);
+  	return (ARCHIVE_OK);
+}
+
+static void WarnOrThrow(int code, archive* a, int throw_level)
+{
+	if (code < throw_level) throw std::runtime_error(archive_error_string(a));
+	if (code < ARCHIVE_OK)
+	{
+		Log(archive_error_string(a), Logger::Severity::Warning);
+	}
+}
+
+bool ExtractAndroidAssets() {
+	Path::gameDir = SDL_AndroidGetExternalStoragePath();
+	auto assetDirs = Path::GetSubDirs(Path::gameDir);
+	if (assetDirs.size() == 0) { //no game files, extract from apk assets.
+		SDL_archive_read_data data;
+		data.rwops = SDL_RWFromFile("usc.zip", "rb");
+
+		/*
+		========== COPIED FROM UPDATER, TODO: USE SAME CODE DIRECTLY ============
+		*/
+		if (data.rwops != nullptr) {
+			struct archive* aSrc = archive_read_new();
+			archive_read_support_format_all(aSrc);
+			archive_read_support_compression_all(aSrc);
+
+			if (int r = archive_read_open(aSrc, &data, NULL, sdl_archive_read, sdl_archive_close))
+			{
+				archive_read_free(aSrc);
+				throw std::runtime_error("Failed to open the archive.");
+			}
+
+			int flags = 0;
+
+			flags |= ARCHIVE_EXTRACT_TIME;
+			flags |= ARCHIVE_EXTRACT_ACL;
+			flags |= ARCHIVE_EXTRACT_FFLAGS;
+
+			flags |= ARCHIVE_EXTRACT_SECURE_NODOTDOT;
+			flags |= ARCHIVE_EXTRACT_SECURE_SYMLINKS;
+
+			struct archive* aDst = archive_write_disk_new();
+			
+			archive_write_disk_set_options(aDst, flags);
+			archive_write_disk_set_standard_lookup(aDst);
+
+			struct archive_entry* entry = nullptr;
+
+			for (;;)
+			{
+				int r = archive_read_next_header(aSrc, &entry);
+
+				if (r == ARCHIVE_EOF) break;
+				if (r < ARCHIVE_WARN) throw std::runtime_error(archive_error_string(aSrc));
+				archive_entry_set_pathname(entry, *Path::Absolute(archive_entry_pathname(entry)));
+				WarnOrThrow(r, aSrc, ARCHIVE_WARN + 1);
+				r = archive_write_header(aDst, entry);
+				WarnOrThrow(r, aSrc, ARCHIVE_WARN + 1);
+				if (r == ARCHIVE_OK && archive_entry_size(entry) > 0)
+				{
+					int r;
+					const void* buff;
+					size_t size;
+					la_int64_t offset;
+
+					for (;;) {
+						r = archive_read_data_block(aSrc, &buff, &size, &offset);
+						
+						if (r == ARCHIVE_EOF) break;
+						WarnOrThrow(r, aSrc, ARCHIVE_OK);
+
+						r = archive_write_data_block(aDst, buff, size, offset);
+						WarnOrThrow(r, aDst, ARCHIVE_OK);
+					}
+
+					r = archive_write_finish_entry(aDst);
+					WarnOrThrow(r, aDst, ARCHIVE_WARN);
+				}
+			}
+		}	
+		/*
+		========== END COPIED CODE ============
+		*/
+	} else {
+		return true;
+	}
+
+
+	assetDirs = Path::GetSubDirs(Path::gameDir);
+	return assetDirs.size() != 0;
+}
+
 
 bool Application::m_Init()
 {
@@ -941,6 +1054,14 @@ bool Application::m_Init()
 
 	String version = Utility::Sprintf("%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 	Logf("Version: %s", Logger::Severity::Info, version.c_str());
+
+//#if ANDROID
+	if (!ExtractAndroidAssets()) {
+		SDL_AndroidShowToast(*Utility::Sprintf("Download and extract game assets to: %s", Path::gameDir), 30000, -1, 0, 0);
+		SDL_OpenURL("https://github.com/SieR-VR/usc-app/releases/download/Assets/usc.zip");
+		throw std::runtime_error("No game assets.");
+	}
+//#endif
 
 #ifdef EMBEDDED
 	Log("Embeedded version.");
@@ -1724,12 +1845,10 @@ Sample Application::LoadSample(const String &name, const bool &external)
 	else
 		path = Path::Absolute(String("skins/") + m_skin + String("/audio/") + name);
 
-#ifndef ANDROID // I don't know why this is not working on android
 	path = Path::Normalize(path);
 	String ext = Path::GetExtension(path);
 	if (ext.empty())
 		path += ".wav";
-#endif
 
 	Sample ret = g_audio->CreateSample(path);
 	//assert(ret);
