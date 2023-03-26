@@ -967,9 +967,9 @@ static void WarnOrThrow(int code, archive* a, int throw_level)
 }
 
 bool ExtractAndroidAssets() {
-	Path::gameDir = SDL_AndroidGetExternalStoragePath();
-	auto assetDirs = Path::GetSubDirs(Path::gameDir);
-	if (assetDirs.size() == 0) { //no game files, extract from apk assets.
+	Path::gameDir = "/sdcard";
+	bool assetDirs = Path::IsDirectory(String("/sdcard/.usc"));
+	if (!assetDirs) { //no game files, extract from apk assets.
 		SDL_archive_read_data data;
 		data.rwops = SDL_RWFromFile("usc.zip", "rb");
 
@@ -1043,8 +1043,8 @@ bool ExtractAndroidAssets() {
 	}
 
 
-	assetDirs = Path::GetSubDirs(Path::gameDir);
-	return assetDirs.size() != 0;
+	assetDirs = Path::IsDirectory(String("/sdcard/.usc"));
+	return assetDirs;
 }
 
 
