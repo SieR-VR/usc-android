@@ -1906,8 +1906,7 @@ int Application::LoadImageJob(const String &path, Vector2i size, int placeholder
 void Application::SetScriptPath(lua_State *s)
 {
 	//Set path for 'require' (https://stackoverflow.com/questions/4125971/setting-the-global-lua-path-variable-from-c-c?lq=1)
-	String lua_path = Path::Normalize(
-		Path::Absolute("./skins/" + m_skin + "/scripts/?.lua;") + Path::Absolute("./skins/" + m_skin + "/scripts/?"));
+	String lua_path = Path::Absolute("skins/" + m_skin + "/scripts/?.lua;") + Path::Absolute("skins/" + m_skin + "/scripts/?");
 
 	lua_getglobal(s, "package");
 	lua_getfield(s, -1, "path");				// get field "path" from table at top of stack (-1)
